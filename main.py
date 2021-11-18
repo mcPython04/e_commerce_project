@@ -1,3 +1,5 @@
+import classes
+
 
 def main():
     print('Welcome to our cmd e-commerce shop!!!')
@@ -26,6 +28,7 @@ def main():
                 print('8. Logout')
 
                 option = input('Please select a menu option (enter the number): ')
+
 
         elif choice == '1':
             print('create account form here')

@@ -41,7 +41,7 @@ def main():
                     flag = False
 
         elif choice == '1':
-            print('create account form here')
+            create_account()
 
         elif choice == '2':
             break
@@ -70,16 +70,75 @@ def get_authentication(username, password):
     cursor.execute(query, param)
     result = cursor.fetchall()
 
+    # if username & password was found/correct instantiate user object and log user in
     if len(result) == 1:
         # instantiate User Object here
         # use result variable to instantiate User object
         print("Logged in successful")
+
+        # store tuple in 'flag' variable and grab user info
+        flag = result[0]
+        userId = flag[0]
+        username = flag[1]
+        pswd = flag[2]
+        email = flag[3]
+        phone = flag[4]
+        shipping = flag[5]
+        credit_num = flag[6]
+        billing = flag[7]
+
+        # INSTANTIATE USER OBJECT HERE!!!!
+
         print(result)
 
         return True
     else:
         print('Failed to Log in')
         return False
+
+
+# ask user for information and create account for user
+def create_account():
+
+    # ask user for info. input
+    print('\nPlease fill out the form.')
+    username = input('Create a Username: ')
+    pswd = input('Create a Password: ')
+    email = input('Email: ')
+    phone = input('Phone: ')
+    shipping = input('Shipping address: ')
+    credit_num = input('Credit card number: ')
+    billing = input('Billing address: ')
+
+    # connect to db
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    # insert new user info into db
+    try:
+        cursor = connection.cursor()
+        query = 'INSERT INTO User (username, password, email, contact, shipping, credit, billing) ' \
+                'VALUES (%s, %s, %s, %s, %s, %s, %s)'
+        param = (username, pswd, email, phone, shipping, credit_num, billing)
+        cursor.execute(query, param)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully created account')
+    except:
+        print('Failed to create account')
+
+    return 0
 
 
 if __name__ == '__main__':

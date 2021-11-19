@@ -7,6 +7,9 @@ def main():
     print('Welcome to our cmd e-commerce shop!!!')
 
     while True:
+        # info about currently logged in user
+        user = None
+
         print('\n0: Login')
         print('1: Create Account')
         print('2: Quit program')
@@ -24,25 +27,43 @@ def main():
 
             # if everything works fine print other menu
             while flag:
-                print('0. View Books')
-                print('1. View Shirts')
-                print('2. Add Item to Cart')
-                print('3. Remove Item from Cart')
-                print('4. Checkout Item from Cart')
-                print('5. View Order History')
-                print('6. Edit Account')
-                print('7. Delete Account')
-                print('8. Logout')
+                print('What page would you like to go to?')
+                print('0. Books'
+                      '\n1. Shirts'
+                      '\n2. Account'
+                      '\n3. Cart'
+                      '\n4. Logout')
 
                 option = input('Please select a menu option (enter the number): ')
 
-                if option == '8':
+                if option == '0':
+                    print("Welcome to the Books page!")
+                    print('Menu options: ')
+
+                elif option == '1':
+                    print("Welcome to the Shirts page!")
+                    print('Menu options: ')
+
+
+                elif option == '2':
+                    print("Account page: ")
+                    print('Menu options: ')
+
+
+                elif option == '3':
+                    print('Cart page: ')
+                    print('Menu options: ')
+
+
+                elif option == '4':
                     print('Logging out......')
                     flag = False
 
+        # calls function to create account
         elif choice == '1':
             create_account()
 
+        # exits the program
         elif choice == '2':
             break
 
@@ -78,7 +99,7 @@ def get_authentication(username, password):
 
         # store tuple in 'flag' variable and grab user info
         flag = result[0]
-        userId = flag[0]
+        userid = flag[0]
         username = flag[1]
         pswd = flag[2]
         email = flag[3]

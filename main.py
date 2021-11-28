@@ -25,7 +25,7 @@ def main():
 
             # if everything works fine print other menu
             while flag:
-                print(user.get_username())
+                print("Welcome " + user.get_username() + " !")
                 print('What page would you like to go to?')
                 print('0. Books'
                       '\n1. Shirts'
@@ -135,6 +135,7 @@ def get_authentication(username, password):
 
         print(result)
 
+        # returns User object and boolean flagS
         return user, True
     else:
         print('Failed to Log in')

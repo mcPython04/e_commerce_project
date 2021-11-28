@@ -1,4 +1,4 @@
-import classes
+from classes import *
 import mysql.connector
 import sys
 
@@ -7,8 +7,6 @@ def main():
     print('Welcome to our cmd e-commerce shop!!!')
 
     while True:
-        # info about currently logged in user
-        user = None
 
         print('\n0: Login')
         print('1: Create Account')
@@ -39,20 +37,43 @@ def main():
                 if option == '0':
                     print("Welcome to the Books page!")
                     print('Menu options: ')
+                    print('0. View all Books'
+                          '\n1. Add item to cart'
+                          '\n2. Go back')
+
+                    flag = input('Please select a menu option (enter the number): ')
+
 
                 elif option == '1':
                     print("Welcome to the Shirts page!")
                     print('Menu options: ')
+                    print('0. View all Shirts'
+                          '\n1. Add item to cart'
+                          '\n2. Go back')
+
+                    flag = input('Please select a menu option (enter the number): ')
 
 
                 elif option == '2':
                     print("Account page: ")
                     print('Menu options: ')
+                    print('0. View order history'
+                          '\n1. Edit account info'
+                          '\n2. Delete account'
+                          '\n3. Go back')
+
+                    flag = input('Please select a menu option (enter the number): ')
 
 
                 elif option == '3':
                     print('Cart page: ')
                     print('Menu options: ')
+                    print('0. View Cart'
+                          '\n1. Remove item from cart'
+                          '\n2. Checkout'
+                          '\n3. Go back')
+
+                    flag = input('Please select a menu option (enter the number): ')
 
 
                 elif option == '4':
@@ -112,6 +133,7 @@ def get_authentication(username, password):
 
         print(result)
 
+        # returns the user object and the bool flag
         return True
     else:
         print('Failed to Log in')

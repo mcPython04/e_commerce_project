@@ -21,10 +21,11 @@ def main():
             # try to get authentication by checking username and password through db
             # then pass that return value to the while loop
 
-            flag = get_authentication(username, pswd)
+            user, flag = get_authentication(username, pswd)
 
             # if everything works fine print other menu
             while flag:
+                print(user.get_username())
                 print('What page would you like to go to?')
                 print('0. Books'
                       '\n1. Shirts'
@@ -130,14 +131,14 @@ def get_authentication(username, password):
         billing = flag[7]
 
         # INSTANTIATE USER OBJECT HERE!!!!
+        user = User(userid, username, pswd, email, phone, shipping, credit_num, billing)
 
         print(result)
 
-        # returns the user object and the bool flag
-        return True
+        return user, True
     else:
         print('Failed to Log in')
-        return False
+        return None, False
 
 
 # ask user for information and create account for user

@@ -377,7 +377,7 @@ def view_shirts():
 
     for i in result:
         print('Shirt ID: ' + str(i[0]))
-        print('Shirt Name: ' + i[1])
+        print('Shirt Color: ' + i[1])
         print('Price: ' + str(i[2]))
         print('Inventory: ' + str(i[3]))
         print("")

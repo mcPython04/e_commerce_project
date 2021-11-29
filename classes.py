@@ -14,3 +14,11 @@ class User:
 
     def get_username(self):
         return self.username
+
+
+class Book:
+    def __init__(self, itemID, name, price, inventory):
+        self.itemID = itemID
+        self.name = name
+        self.price = price
+        self.inventory = inventory

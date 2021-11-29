@@ -54,7 +54,10 @@ def main():
                           '\n1. Add item to cart'
                           '\n2. Go back')
 
-                    flag = input('Please select a menu option (enter the number): ')
+                    flag = int(input('Please select a menu option (enter the number): '))
+
+                    if flag == 0:
+                        view_shirts()
 
                 elif option == '2':
                     print("Account page: ")
@@ -353,6 +356,7 @@ def view_books():
         print('Price: ' + str(i[2]))
         print('Inventory: ' + str(i[3]))
         print("")
+
 
 # queries the database and display all the shirts
 def view_shirts():

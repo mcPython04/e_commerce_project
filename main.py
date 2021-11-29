@@ -63,7 +63,33 @@ def main():
                           '\n2. Delete account'
                           '\n3. Go back')
 
-                    flag = input('Please select a menu option (enter the number): ')
+                    flag = int(input('Please select a menu option (enter the number): '))
+
+                    if flag == 0:
+                        print('order history')
+
+                    elif flag == 1:
+                        print('Current account info: ')
+                        print('User ID: ' + str(user.userid))
+                        print('Username: ' + user.username)
+                        print('Password: ' + user.pswd)
+                        print("Email: " + user.email)
+                        print("Phone: " + user.phone)
+                        print("Shipping: " + user.shipping)
+                        print('Credit Card Number: ' + user.credit_num)
+                        print('Billing: ' + user.billing)
+
+                        print('Options: ')
+                        print('0. Update shipping info.'
+                              '\n1. Update payment info. '
+                              '\n2. Go back')
+
+                        flag1 = int(input('Select a menu option: '))
+
+                        if flag1 == 0:
+                            new = input('Enter new shipping address: ')
+                            user = update_shipping(new, user)
+
 
 
                 elif option == '3':
@@ -80,6 +106,7 @@ def main():
                 elif option == '4':
                     print('Logging out......')
                     flag = False
+                    user = None
 
         # calls function to create account
         elif choice == '1':
@@ -183,6 +210,38 @@ def create_account():
         print('Failed to create account')
 
     return 0
+
+
+def update_shipping(new, user):
+    # connect to db
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    try:
+        cursor = connection.cursor()
+        query = 'UPDATE User SET shipping = %s WHERE userID = %s'
+        param = (new, user.userid)
+        cursor.execute(query, param)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully updated shipping info')
+    except:
+        print('Failed to update shipping info')
+
+    print('Re-logging in...')
+    user, flag = get_authentication(user.username, user.pswd)
+    return user
 
 
 if __name__ == '__main__':

@@ -16,13 +16,13 @@ class User:
         return self.username
 
 
-
 class Books:
     def __init__(self, itemID, name, price, inventory):
         self.itemID = itemID
         self.name = name
         self.price = price
         self.inventory = inventory
+
 
 class Shirts:
     def __init__(self, shirtID, color, price, inventory):

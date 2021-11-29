@@ -21,10 +21,10 @@ def main():
             # try to get authentication by checking username and password through db
             # then pass that return value to the while loop
 
-            user, flag = get_authentication(username, pswd)
+            user, stat_flag = get_authentication(username, pswd)
 
             # if everything works fine print other menu
-            while flag:
+            while stat_flag:
                 print(user.get_username())
                 print('What page would you like to go to?')
                 print('0. Books'
@@ -44,7 +44,6 @@ def main():
 
                     flag = input('Please select a menu option (enter the number): ')
 
-
                 elif option == '1':
                     print("Welcome to the Shirts page!")
                     print('Menu options: ')
@@ -53,7 +52,6 @@ def main():
                           '\n2. Go back')
 
                     flag = input('Please select a menu option (enter the number): ')
-
 
                 elif option == '2':
                     print("Account page: ")
@@ -68,6 +66,7 @@ def main():
                     if flag == 0:
                         print('order history')
 
+                    # edit account menu
                     elif flag == 1:
                         print('Current account info: ')
                         print('User ID: ' + str(user.userid))
@@ -94,6 +93,24 @@ def main():
                             new = input('Enter new credit card info: ')
                             update_credit(new, user)
 
+                        elif flag1 == 2:
+                            break
+
+                    # delete account
+                    elif flag == 2:
+                        ans = input('Are you sure you want to delete the account (y/n)? ')
+
+                        if ans == 'y':
+                            delete_account(user.userid)
+                            user = None
+                            stat_flag = False
+
+                        elif ans == 'n':
+                            break
+
+                    # go back
+                    elif flag == 3:
+                        break
 
                 elif option == '3':
                     print('Cart page: ')
@@ -105,10 +122,9 @@ def main():
 
                     flag = input('Please select a menu option (enter the number): ')
 
-
                 elif option == '4':
                     print('Logging out......')
-                    flag = False
+                    stat_flag = False
                     user = None
 
         # calls function to create account
@@ -215,6 +231,7 @@ def create_account():
     return 0
 
 
+# function that queries database to update shipping info
 def update_shipping(new, user):
     # connect to db
     try:
@@ -246,6 +263,7 @@ def update_shipping(new, user):
     get_authentication(user.username, user.pswd)
 
 
+# function that queries database to update credit card info
 def update_credit(new, user):
     # connect to db
     try:
@@ -275,6 +293,34 @@ def update_credit(new, user):
 
     print('Re-logging in...')
     get_authentication(user.username, user.pswd)
+
+
+# queries the database and deletes an account
+def delete_account(userID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    try:
+        cursor = connection.cursor()
+        query = f'DELETE FROM User WHERE userID = {userID}'
+        cursor.execute(query)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully deleted account')
+    except:
+        connection.rollback()
+        print('Failed to delete account')
 
 
 if __name__ == '__main__':

@@ -24,3 +24,9 @@ class Books:
         self.price = price
         self.inventory = inventory
 
+class Shirts:
+    def __init__(self, shirtID, color, price, inventory):
+        self.itemID = shirtID
+        self.color = color
+        self.price = price
+        self.inventory = inventory

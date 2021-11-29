@@ -88,8 +88,11 @@ def main():
 
                         if flag1 == 0:
                             new = input('Enter new shipping address: ')
-                            user = update_shipping(new, user)
+                            update_shipping(new, user)
 
+                        elif flag1 == 1:
+                            new = input('Enter new credit card info: ')
+                            update_credit(new, user)
 
 
                 elif option == '3':
@@ -240,8 +243,38 @@ def update_shipping(new, user):
         print('Failed to update shipping info')
 
     print('Re-logging in...')
-    user, flag = get_authentication(user.username, user.pswd)
-    return user
+    get_authentication(user.username, user.pswd)
+
+
+def update_credit(new, user):
+    # connect to db
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    try:
+        cursor = connection.cursor()
+        query = 'UPDATE User SET credit = %s WHERE userID = %s'
+        param = (new, user.userid)
+        cursor.execute(query, param)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully updated credit card info')
+    except:
+        print('Failed to update credit card info')
+
+    print('Re-logging in...')
+    get_authentication(user.username, user.pswd)
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ from classes import *
 import mysql.connector
 import sys
 
-print('helllo')
+print('hello')
 
 def main():
     print('Welcome to our cmd e-commerce shop!!!')

@@ -354,6 +354,34 @@ def view_books():
         print('Inventory: ' + str(i[3]))
         print("")
 
+# queries the database and display all the shirts
+def view_shirts():
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    cursor = connection.cursor()
+    query = "SELECT * FROM Shirt"
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    for i in result:
+        print('Shirt ID: ' + str(i[0]))
+        print('Shirt Name: ' + i[1])
+        print('Price: ' + str(i[2]))
+        print('Inventory: ' + str(i[3]))
+        print("")
+
 
 if __name__ == '__main__':
     main()

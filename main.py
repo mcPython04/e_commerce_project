@@ -25,7 +25,6 @@ def main():
 
             # if everything works fine print other menu
             while stat_flag:
-                print(user.get_username())
                 print('What page would you like to go to?')
                 print('0. Books'
                       '\n1. Shirts'
@@ -109,11 +108,11 @@ def main():
 
                         if flag1 == 0:
                             new = input('Enter new shipping address: ')
-                            update_shipping(new, user)
+                            user = update_shipping(new, user)
 
                         elif flag1 == 1:
                             new = input('Enter new credit card info: ')
-                            update_credit(new, user)
+                            user = update_credit(new, user)
 
                         elif flag1 == 2:
                             break
@@ -126,6 +125,7 @@ def main():
                             delete_account(user.userid)
                             user = None
                             stat_flag = False
+                            break
 
                         elif ans == 'n':
                             break
@@ -293,7 +293,8 @@ def update_shipping(new, user):
         print('Failed to update shipping info')
 
     print('Re-logging in...')
-    get_authentication(user.username, user.pswd)
+    user, flag = get_authentication(user.username, user.pswd)
+    return user
 
 
 # function that queries database to update credit card info
@@ -325,7 +326,8 @@ def update_credit(new, user):
         print('Failed to update credit card info')
 
     print('Re-logging in...')
-    get_authentication(user.username, user.pswd)
+    user, flag = get_authentication(user.username, user.pswd)
+    return user
 
 
 # queries the database and deletes an account

@@ -35,7 +35,7 @@ def main():
 
                 option = input('Please select a menu option (enter the number): ')
 
-                if option == '0':
+                while option == '0':
                     print("\nWelcome to the Books page!")
                     print('Menu options: ')
                     print('0. View all books'
@@ -47,7 +47,15 @@ def main():
                     if flag == 0:
                         view_books()
 
-                elif option == '1':
+                    elif flag == 1:
+                        itemID = int(input('Please enter the Item ID to add to cart: '))
+                        quantity = int(input('Please enter the quantity you like: '))
+                        add_cart(user.userid, itemID, quantity)
+
+                    elif flag == 2:
+                        break
+
+                while option == '1':
                     print("\nWelcome to the Shirts page!")
                     print('Menu options: ')
                     print('0. View all shirts'
@@ -59,7 +67,15 @@ def main():
                     if flag == 0:
                         view_shirts()
 
-                elif option == '2':
+                    elif flag == 1:
+                        itemID = int(input('Please enter the Item ID to add to cart: '))
+                        quantity = int(input('Please enter the quantity you like: '))
+                        add_cart(user.userid, itemID, quantity)
+
+                    elif flag == 2:
+                        break
+
+                while option == '2':
                     print("Account page: ")
                     print('Menu options: ')
                     print('0. View order history'
@@ -118,7 +134,7 @@ def main():
                     elif flag == 3:
                         break
 
-                elif option == '3':
+                while option == '3':
                     print('Cart page: ')
                     print('Menu options: ')
                     print('0. View Cart'
@@ -126,12 +142,21 @@ def main():
                           '\n2. Checkout'
                           '\n3. Go back')
 
-                    flag = input('Please select a menu option (enter the number): ')
+                    flag = int(input('Please select a menu option (enter the number): '))
 
-                elif option == '4':
+                    if flag == 0:
+                        view_cart(user.userid)
+
+
+
+                    elif flag == 3:
+                        break
+
+                while option == '4':
                     print('Logging out......')
                     stat_flag = False
                     user = None
+                    break
 
         # calls function to create account
         elif choice == '1':
@@ -384,6 +409,71 @@ def view_books():
         print('Book Name: ' + i[1])
         print('Price: ' + str(i[2]))
         print('Inventory: ' + str(i[3]))
+        print('')
+
+
+# adds item to cart in database
+def add_cart(userID, itemID, quantity):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    # insert item into cart
+    try:
+        cursor = connection.cursor()
+        query = 'INSERT INTO Cart (userID, itemID, quantity) ' \
+                'VALUES (%s, %s, %s)'
+        param = (userID, itemID, quantity)
+        cursor.execute(query, param)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully added item to cart')
+    except:
+        print('Failed to add item to cart')
+
+
+# view cart
+def view_cart(userID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    cursor = connection.cursor()
+    query = f'''
+                SELECT Items.name AS Item,
+                Items.price AS Price,
+                Cart.quantity AS Quantity
+                From Items
+                INNER JOIN Cart ON Items.itemID = Cart.itemID
+                WHERE userID = {userID}
+            '''
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    for i in result:
+        print('Item name: ' + str(i[0]))
+        print('Item price: ' + str(i[1]))
+        print('Item quantity: ' + str(i[2]))
         print('')
 
 

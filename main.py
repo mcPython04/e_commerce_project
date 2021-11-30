@@ -147,7 +147,9 @@ def main():
                     if flag == 0:
                         view_cart(user.userid)
 
-
+                    elif flag == 1:
+                        itemID = int(input('What item you would want to remove from cart (enter item ID)? '))
+                        remove_cart(user.userid, itemID)
 
                     elif flag == 3:
                         break
@@ -347,7 +349,7 @@ def delete_account(userID):
         query = f'DELETE FROM User WHERE userID = {userID}'
         cursor.execute(query)
         connection.commit()
-        print(cursor.rowcount, " record inserted.")
+        print(cursor.rowcount, " record deleted.")
         print('Successfully deleted account')
     except:
         connection.rollback()
@@ -460,7 +462,8 @@ def view_cart(userID):
 
     cursor = connection.cursor()
     query = f'''
-                SELECT Items.name AS Item,
+                SELECT Items.itemID AS ID,
+                Items.name AS Item,
                 Items.price AS Price,
                 Cart.quantity AS Quantity
                 From Items
@@ -471,10 +474,39 @@ def view_cart(userID):
     result = cursor.fetchall()
 
     for i in result:
-        print('Item name: ' + str(i[0]))
-        print('Item price: ' + str(i[1]))
-        print('Item quantity: ' + str(i[2]))
+        print('Item ID: ' + str(i[0]))
+        print('Item name: ' + str(i[1]))
+        print('Item price: ' + str(i[2]))
+        print('Item quantity: ' + str(i[3]))
         print('')
+
+
+# removes an item from the cart
+def remove_cart(userID, itemID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    try:
+        cursor = connection.cursor()
+        query = f'DELETE FROM Cart WHERE itemID = {itemID} AND userID = {userID}'
+        cursor.execute(query)
+        connection.commit()
+        print(cursor.rowcount, " record deleted.")
+        print('Successfully deleted item from cart')
+    except:
+        connection.rollback()
+        print("Failed to delete from cart")
 
 
 if __name__ == '__main__':

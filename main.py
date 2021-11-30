@@ -36,9 +36,9 @@ def main():
                 option = input('Please select a menu option (enter the number): ')
 
                 if option == '0':
-                    print("Welcome to the Books page!")
+                    print("\nWelcome to the Books page!")
                     print('Menu options: ')
-                    print('0. View all Books'
+                    print('0. View all books'
                           '\n1. Add item to cart'
                           '\n2. Go back')
 
@@ -48,13 +48,16 @@ def main():
                         view_books()
 
                 elif option == '1':
-                    print("Welcome to the Shirts page!")
+                    print("\nWelcome to the Shirts page!")
                     print('Menu options: ')
-                    print('0. View all Shirts'
+                    print('0. View all shirts'
                           '\n1. Add item to cart'
                           '\n2. Go back')
 
-                    flag = input('Please select a menu option (enter the number): ')
+                    flag = int(input('Please select a menu option (enter the number): '))
+
+                    if flag == 0:
+                        view_shirts()
 
                 elif option == '2':
                     print("Account page: ")
@@ -326,7 +329,36 @@ def delete_account(userID):
         print('Failed to delete account')
 
 
-# queries the database and display all the books
+# displays all the shirts
+def view_shirts():
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Items WHERE category LIKE \"shirt\"')
+    result = cursor.fetchall()
+    print(result)
+
+    for i in result:
+        print('Item ID: ' + str(i[0]))
+        print('Shirt Name: ' + i[1])
+        print('Price: ' + str(i[2]))
+        print('Inventory: ' + str(i[3]))
+        print('')
+
+
+# displays all the books
 def view_books():
     try:
         connection = mysql.connector.connect(
@@ -343,16 +375,16 @@ def view_books():
         sys.exit()
 
     cursor = connection.cursor()
-    query = "SELECT * FROM Book"
-    cursor.execute(query)
+    cursor.execute('SELECT * FROM Items WHERE category LIKE \"book\"')
     result = cursor.fetchall()
+    print(result)
 
     for i in result:
-        print('Book ID: ' + str(i[0]))
+        print('Item ID: ' + str(i[0]))
         print('Book Name: ' + i[1])
         print('Price: ' + str(i[2]))
         print('Inventory: ' + str(i[3]))
-        print("")
+        print('')
 
 
 if __name__ == '__main__':

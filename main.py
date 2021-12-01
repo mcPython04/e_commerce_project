@@ -75,6 +75,7 @@ def main():
                     elif flag == 2:
                         break
 
+                # Account menu
                 while option == '2':
                     print("Account page: ")
                     print('Menu options: ')

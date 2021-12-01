@@ -19,9 +19,8 @@ def main():
             username = input('Username: ')
             pswd = input('Password: ')
 
-            # try to get authentication by checking username and password through db
+            # get authentication by checking username and password through db
             # then pass that return value to the while loop
-
             user, stat_flag = get_authentication(username, pswd)
 
             # if everything works fine print other menu
@@ -35,6 +34,7 @@ def main():
 
                 option = input('Please select a menu option (enter the number): ')
 
+                # Books menu
                 while option == '0':
                     print("\nWelcome to the Books page!")
                     print('Menu options: ')
@@ -55,6 +55,7 @@ def main():
                     elif flag == 2:
                         break
 
+                # Shirts menu
                 while option == '1':
                     print("\nWelcome to the Shirts page!")
                     print('Menu options: ')
@@ -86,7 +87,7 @@ def main():
                     flag = int(input('Please select a menu option (enter the number): '))
 
                     if flag == 0:
-                        print('order history')
+                        view_order(user.userid)
 
                     # edit account menu
                     elif flag == 1:
@@ -135,6 +136,7 @@ def main():
                     elif flag == 3:
                         break
 
+                # Cart menu
                 while option == '3':
                     print('Cart page: ')
                     print('Menu options: ')
@@ -164,6 +166,7 @@ def main():
                     elif flag == 3:
                         break
 
+                # Logout option
                 while option == '4':
                     print('Logging out......')
                     stat_flag = False
@@ -607,6 +610,34 @@ def create_order(userID, total_price):
         print('Successfully created order')
     except:
         print('Failed to create order')
+
+
+# functions that displays user's order history
+def view_order(userID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    cursor = connection.cursor()
+    query = f"SELECT * FROM Orders WHERE userID = {userID}"
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    print('\nOrder History: ')
+
+    for i in result:
+        print('\nOrder ID: ' + str(i[0]))
+        print('Total Price: ' + str(i[2]))
 
 
 if __name__ == '__main__':

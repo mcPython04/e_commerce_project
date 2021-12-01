@@ -1,7 +1,6 @@
 from classes import *
 import mysql.connector
 import sys
-from datetime import date
 
 
 def main():

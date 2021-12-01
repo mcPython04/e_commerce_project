@@ -1,6 +1,7 @@
 from classes import *
 import mysql.connector
 import sys
+from datetime import date
 
 
 def main():
@@ -150,6 +151,15 @@ def main():
                     elif flag == 1:
                         itemID = int(input('What item you would want to remove from cart (enter item ID)? '))
                         remove_cart(user.userid, itemID)
+
+                    elif flag == 2:
+                        ans = input('Proceed to checkout? (y/n)')
+
+                        if ans == 'y':
+                            checkout(user.userid)
+                            break
+                        else:
+                            break
 
                     elif flag == 3:
                         break
@@ -320,7 +330,6 @@ def update_credit(new, user):
         param = (new, user.userid)
         cursor.execute(query, param)
         connection.commit()
-        print(cursor.rowcount, " record inserted.")
         print('Successfully updated credit card info')
     except:
         print('Failed to update credit card info')
@@ -475,12 +484,22 @@ def view_cart(userID):
     cursor.execute(query)
     result = cursor.fetchall()
 
+    id = []
+    quantity = []
+    price = []
+
     for i in result:
         print('Item ID: ' + str(i[0]))
         print('Item name: ' + str(i[1]))
         print('Item price: ' + str(i[2]))
         print('Item quantity: ' + str(i[3]))
         print('')
+
+        id.append(i[0])
+        price.append(i[2])
+        quantity.append(i[3])
+
+    return id, price, quantity
 
 
 # removes an item from the cart
@@ -509,6 +528,85 @@ def remove_cart(userID, itemID):
     except:
         connection.rollback()
         print("Failed to delete from cart")
+
+
+# checkouts the cart
+def checkout(userID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    try:
+        id, price, quantity = view_cart(userID)
+
+        # Queries database to update inventory information on items
+        count = 0
+        for i in id:
+            cursor = connection.cursor()
+            query = f"UPDATE Items SET inventory = (inventory - {quantity[count]}) WHERE itemID = {i}"
+            cursor.execute(query)
+            connection.commit()
+            count += 1
+
+
+        total_price = 0
+
+        # Calculates total price to create order
+        count1 = 0
+        for i in price:
+            total_price += i * quantity[count1]
+            count1 += 1
+
+        # Calls function to create order and add order to database
+        create_order(userID, total_price)
+
+        # Empties user's cart
+        cursor = connection.cursor()
+        query = f"DELETE FROM Cart WHERE userID = {userID}"
+        cursor.execute(query)
+        connection.commit()
+
+        print("Checkout successful!!!")
+    except:
+        print("Checkout unsuccessful.")
+
+
+# function that queries database to add orders
+def create_order(userID, total_price):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    # insert new order info into db
+    try:
+        cursor = connection.cursor()
+        query = f'INSERT INTO Orders(userID, total_price) VALUES ({userID}, {total_price})'
+        cursor.execute(query)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully created order')
+    except:
+        print('Failed to create order')
 
 
 if __name__ == '__main__':

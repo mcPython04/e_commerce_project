@@ -18,14 +18,12 @@ def main():
             username = input('Username: ')
             pswd = input('Password: ')
 
-            # try to get authentication by checking username and password through db
+            # get authentication by checking username and password through db
             # then pass that return value to the while loop
-
             user, stat_flag = get_authentication(username, pswd)
 
             # if everything works fine print other menu
             while stat_flag:
-                print(user.get_username())
                 print('What page would you like to go to?')
                 print('0. Books'
                       '\n1. Shirts'
@@ -35,7 +33,8 @@ def main():
 
                 option = input('Please select a menu option (enter the number): ')
 
-                if option == '0':
+                # Books menu
+                while option == '0':
                     print("\nWelcome to the Books page!")
                     print('Menu options: ')
                     print('0. View all books'
@@ -47,7 +46,16 @@ def main():
                     if flag == 0:
                         view_books()
 
-                elif option == '1':
+                    elif flag == 1:
+                        itemID = int(input('Please enter the Item ID to add to cart: '))
+                        quantity = int(input('Please enter the quantity you like: '))
+                        add_cart(user.userid, itemID, quantity)
+
+                    elif flag == 2:
+                        break
+
+                # Shirts menu
+                while option == '1':
                     print("\nWelcome to the Shirts page!")
                     print('Menu options: ')
                     print('0. View all shirts'
@@ -59,7 +67,16 @@ def main():
                     if flag == 0:
                         view_shirts()
 
-                elif option == '2':
+                    elif flag == 1:
+                        itemID = int(input('Please enter the Item ID to add to cart: '))
+                        quantity = int(input('Please enter the quantity you like: '))
+                        add_cart(user.userid, itemID, quantity)
+
+                    elif flag == 2:
+                        break
+
+                # Account menu
+                while option == '2':
                     print("Account page: ")
                     print('Menu options: ')
                     print('0. View order history'
@@ -70,7 +87,7 @@ def main():
                     flag = int(input('Please select a menu option (enter the number): '))
 
                     if flag == 0:
-                        print('order history')
+                        view_order(user.userid)
 
                     # edit account menu
                     elif flag == 1:
@@ -93,11 +110,11 @@ def main():
 
                         if flag1 == 0:
                             new = input('Enter new shipping address: ')
-                            update_shipping(new, user)
+                            user = update_shipping(new, user)
 
                         elif flag1 == 1:
                             new = input('Enter new credit card info: ')
-                            update_credit(new, user)
+                            user = update_credit(new, user)
 
                         elif flag1 == 2:
                             break
@@ -110,6 +127,7 @@ def main():
                             delete_account(user.userid)
                             user = None
                             stat_flag = False
+                            break
 
                         elif ans == 'n':
                             break
@@ -118,7 +136,8 @@ def main():
                     elif flag == 3:
                         break
 
-                elif option == '3':
+                # Cart menu
+                while option == '3':
                     print('Cart page: ')
                     print('Menu options: ')
                     print('0. View Cart'
@@ -126,12 +145,33 @@ def main():
                           '\n2. Checkout'
                           '\n3. Go back')
 
-                    flag = input('Please select a menu option (enter the number): ')
+                    flag = int(input('Please select a menu option (enter the number): '))
 
-                elif option == '4':
+                    if flag == 0:
+                        view_cart(user.userid)
+
+                    elif flag == 1:
+                        itemID = int(input('What item you would want to remove from cart (enter item ID)? '))
+                        remove_cart(user.userid, itemID)
+
+                    elif flag == 2:
+                        ans = input('Proceed to checkout? (y/n)')
+
+                        if ans == 'y':
+                            checkout(user.userid)
+                            break
+                        else:
+                            break
+
+                    elif flag == 3:
+                        break
+
+                # Logout option
+                while option == '4':
                     print('Logging out......')
                     stat_flag = False
                     user = None
+                    break
 
         # calls function to create account
         elif choice == '1':
@@ -266,7 +306,8 @@ def update_shipping(new, user):
         print('Failed to update shipping info')
 
     print('Re-logging in...')
-    get_authentication(user.username, user.pswd)
+    user, flag = get_authentication(user.username, user.pswd)
+    return user
 
 
 # function that queries database to update credit card info
@@ -292,13 +333,13 @@ def update_credit(new, user):
         param = (new, user.userid)
         cursor.execute(query, param)
         connection.commit()
-        print(cursor.rowcount, " record inserted.")
         print('Successfully updated credit card info')
     except:
         print('Failed to update credit card info')
 
     print('Re-logging in...')
-    get_authentication(user.username, user.pswd)
+    user, flag = get_authentication(user.username, user.pswd)
+    return user
 
 
 # queries the database and deletes an account
@@ -322,7 +363,7 @@ def delete_account(userID):
         query = f'DELETE FROM User WHERE userID = {userID}'
         cursor.execute(query)
         connection.commit()
-        print(cursor.rowcount, " record inserted.")
+        print(cursor.rowcount, " record deleted.")
         print('Successfully deleted account')
     except:
         connection.rollback()
@@ -385,6 +426,218 @@ def view_books():
         print('Price: ' + str(i[2]))
         print('Inventory: ' + str(i[3]))
         print('')
+
+
+# adds item to cart in database
+def add_cart(userID, itemID, quantity):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    # insert item into cart
+    try:
+        cursor = connection.cursor()
+        query = 'INSERT INTO Cart (userID, itemID, quantity) ' \
+                'VALUES (%s, %s, %s)'
+        param = (userID, itemID, quantity)
+        cursor.execute(query, param)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully added item to cart')
+    except:
+        print('Failed to add item to cart')
+
+
+# view cart
+def view_cart(userID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    cursor = connection.cursor()
+    query = f'''
+                SELECT Items.itemID AS ID,
+                Items.name AS Item,
+                Items.price AS Price,
+                Cart.quantity AS Quantity
+                From Items
+                INNER JOIN Cart ON Items.itemID = Cart.itemID
+                WHERE userID = {userID}
+            '''
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    id = []
+    quantity = []
+    price = []
+
+    for i in result:
+        print('Item ID: ' + str(i[0]))
+        print('Item name: ' + str(i[1]))
+        print('Item price: ' + str(i[2]))
+        print('Item quantity: ' + str(i[3]))
+        print('')
+
+        id.append(i[0])
+        price.append(i[2])
+        quantity.append(i[3])
+
+    return id, price, quantity
+
+
+# removes an item from the cart
+def remove_cart(userID, itemID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    try:
+        cursor = connection.cursor()
+        query = f'DELETE FROM Cart WHERE itemID = {itemID} AND userID = {userID}'
+        cursor.execute(query)
+        connection.commit()
+        print(cursor.rowcount, " record deleted.")
+        print('Successfully deleted item from cart')
+    except:
+        connection.rollback()
+        print("Failed to delete from cart")
+
+
+# checkouts the cart
+def checkout(userID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    try:
+        id, price, quantity = view_cart(userID)
+
+        # Queries database to update inventory information on items
+        count = 0
+        for i in id:
+            cursor = connection.cursor()
+            query = f"UPDATE Items SET inventory = (inventory - {quantity[count]}) WHERE itemID = {i}"
+            cursor.execute(query)
+            connection.commit()
+            count += 1
+
+
+        total_price = 0
+
+        # Calculates total price to create order
+        count1 = 0
+        for i in price:
+            total_price += i * quantity[count1]
+            count1 += 1
+
+        # Calls function to create order and add order to database
+        create_order(userID, total_price)
+
+        # Empties user's cart
+        cursor = connection.cursor()
+        query = f"DELETE FROM Cart WHERE userID = {userID}"
+        cursor.execute(query)
+        connection.commit()
+
+        print("Checkout successful!!!")
+    except:
+        print("Checkout unsuccessful.")
+
+
+# function that queries database to add orders
+def create_order(userID, total_price):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    # insert new order info into db
+    try:
+        cursor = connection.cursor()
+        query = f'INSERT INTO Orders(userID, total_price) VALUES ({userID}, {total_price})'
+        cursor.execute(query)
+        connection.commit()
+        print(cursor.rowcount, " record inserted.")
+        print('Successfully created order')
+    except:
+        print('Failed to create order')
+
+
+# functions that displays user's order history
+def view_order(userID):
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="e_commerce"
+        )
+        print("Successful connection.")
+
+    except:
+        print("Failed connection.")
+        ## exits the program if unsuccessful
+        sys.exit()
+
+    cursor = connection.cursor()
+    query = f"SELECT * FROM Orders WHERE userID = {userID}"
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    print('\nOrder History: ')
+
+    for i in result:
+        print('\nOrder ID: ' + str(i[0]))
+        print('Total Price: ' + str(i[2]))
 
 
 if __name__ == '__main__':

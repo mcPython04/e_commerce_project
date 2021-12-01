@@ -9,12 +9,6 @@ class User:
         self.credit_num = credit_num
         self.billing = billing
 
-    def get_userid(self):
-        return self.userid
-
-    def get_username(self):
-        return self.username
-
 
 class Books:
     def __init__(self, itemID, name, price, inventory):

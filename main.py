@@ -24,6 +24,7 @@ def main():
 
             # if everything works fine print other menu
             while stat_flag:
+                print('\nWelcome ' + user.username + '!!!')
                 print('What page would you like to go to?')
                 print('0. Books'
                       '\n1. Shirts'
@@ -77,7 +78,7 @@ def main():
 
                 # Account menu
                 while option == '2':
-                    print("Account page: ")
+                    print("\nAccount page: ")
                     print('Menu options: ')
                     print('0. View order history'
                           '\n1. Edit account info'
@@ -91,8 +92,8 @@ def main():
 
                     # edit account menu
                     elif flag == 1:
-                        print('Current account info: ')
-                        print('User ID: ' + str(user.userid))
+                        print('\nCurrent account info: ')
+                        print('\nUser ID: ' + str(user.userid))
                         print('Username: ' + user.username)
                         print('Password: ' + user.pswd)
                         print("Email: " + user.email)
@@ -101,7 +102,7 @@ def main():
                         print('Credit Card Number: ' + user.credit_num)
                         print('Billing: ' + user.billing)
 
-                        print('Options: ')
+                        print('\nOptions: ')
                         print('0. Update shipping info.'
                               '\n1. Update payment info. '
                               '\n2. Go back')
@@ -138,7 +139,7 @@ def main():
 
                 # Cart menu
                 while option == '3':
-                    print('Cart page: ')
+                    print('\nCart page: ')
                     print('Menu options: ')
                     print('0. View Cart'
                           '\n1. Remove item from cart'
@@ -192,7 +193,6 @@ def get_authentication(username, password):
             password="",
             database="e_commerce"
         )
-        print("Successful connection.")
 
     except:
         print("Failed connection.")
@@ -209,7 +209,7 @@ def get_authentication(username, password):
     if len(result) == 1:
         # instantiate User Object here
         # use result variable to instantiate User object
-        print("Logged in successful")
+        print("Login successful")
 
         # store tuple in 'flag' variable and grab user info
         flag = result[0]
@@ -224,8 +224,6 @@ def get_authentication(username, password):
 
         # INSTANTIATE USER OBJECT HERE!!!!
         user = User(userid, username, pswd, email, phone, shipping, credit_num, billing)
-
-        print(result)
 
         return user, True
     else:
@@ -379,7 +377,6 @@ def view_shirts():
             password="",
             database="e_commerce"
         )
-        print("Successful connection.")
 
     except:
         print("Failed connection.")
@@ -389,14 +386,14 @@ def view_shirts():
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM Items WHERE category LIKE \"shirt\"')
     result = cursor.fetchall()
-    print(result)
+
+    print('\nShirt Items: ')
 
     for i in result:
-        print('Item ID: ' + str(i[0]))
+        print('\nItem ID: ' + str(i[0]))
         print('Shirt Name: ' + i[1])
         print('Price: ' + str(i[2]))
         print('Inventory: ' + str(i[3]))
-        print('')
 
 
 # displays all the books
@@ -408,7 +405,6 @@ def view_books():
             password="",
             database="e_commerce"
         )
-        print("Successful connection.")
 
     except:
         print("Failed connection.")
@@ -418,14 +414,14 @@ def view_books():
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM Items WHERE category LIKE \"book\"')
     result = cursor.fetchall()
-    print(result)
+
+    print('\nBook Items: ')
 
     for i in result:
-        print('Item ID: ' + str(i[0]))
+        print('\nItem ID: ' + str(i[0]))
         print('Book Name: ' + i[1])
         print('Price: ' + str(i[2]))
         print('Inventory: ' + str(i[3]))
-        print('')
 
 
 # adds item to cart in database
@@ -437,7 +433,6 @@ def add_cart(userID, itemID, quantity):
             password="",
             database="e_commerce"
         )
-        print("Successful connection.")
 
     except:
         print("Failed connection.")
@@ -452,7 +447,6 @@ def add_cart(userID, itemID, quantity):
         param = (userID, itemID, quantity)
         cursor.execute(query, param)
         connection.commit()
-        print(cursor.rowcount, " record inserted.")
         print('Successfully added item to cart')
     except:
         print('Failed to add item to cart')
@@ -467,7 +461,6 @@ def view_cart(userID):
             password="",
             database="e_commerce"
         )
-        print("Successful connection.")
 
     except:
         print("Failed connection.")
@@ -491,8 +484,10 @@ def view_cart(userID):
     quantity = []
     price = []
 
+    print('\nCart Items: ')
+
     for i in result:
-        print('Item ID: ' + str(i[0]))
+        print('\nItem ID: ' + str(i[0]))
         print('Item name: ' + str(i[1]))
         print('Item price: ' + str(i[2]))
         print('Item quantity: ' + str(i[3]))
@@ -542,7 +537,6 @@ def checkout(userID):
             password="",
             database="e_commerce"
         )
-        print("Successful connection.")
 
     except:
         print("Failed connection.")
@@ -579,7 +573,7 @@ def checkout(userID):
         cursor.execute(query)
         connection.commit()
 
-        print("Checkout successful!!!")
+        print("Checkout successful!!! Successfully created order for above items!")
     except:
         print("Checkout unsuccessful.")
 
@@ -593,7 +587,6 @@ def create_order(userID, total_price):
             password="",
             database="e_commerce"
         )
-        print("Successful connection.")
 
     except:
         print("Failed connection.")
@@ -606,7 +599,6 @@ def create_order(userID, total_price):
         query = f'INSERT INTO Orders(userID, total_price) VALUES ({userID}, {total_price})'
         cursor.execute(query)
         connection.commit()
-        print(cursor.rowcount, " record inserted.")
         print('Successfully created order')
     except:
         print('Failed to create order')

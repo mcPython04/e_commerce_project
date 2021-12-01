@@ -8,19 +8,3 @@ class User:
         self.shipping = shipping
         self.credit_num = credit_num
         self.billing = billing
-
-
-class Books:
-    def __init__(self, itemID, name, price, inventory):
-        self.itemID = itemID
-        self.name = name
-        self.price = price
-        self.inventory = inventory
-
-
-class Shirts:
-    def __init__(self, shirtID, color, price, inventory):
-        self.itemID = shirtID
-        self.color = color
-        self.price = price
-        self.inventory = inventory
